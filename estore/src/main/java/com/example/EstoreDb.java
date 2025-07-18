@@ -2,72 +2,35 @@ package com.example;
 
 import java.sql.*;
 
-public class EstoreDb
-{
+public class EstoreDb {
     private String tableName;
 
-    public EstoreDb(String tableName)
-    {
+    public EstoreDb(String tableName) {
         this.tableName = tableName;
-    }
-
-    // Metodo statico che esegue l'inserimento (CREATE) di un utente nel database
-    public void insertUtente(String nome, String email) {
-
-        // Query SQL con parametri da sostituire con PreparedStatement 
-        String sql = "INSERT INTO ? (nome, email) VALUES (?, ?)";
-
-        // Apertura del blocco try-with-resources che chiude automaticamente connessione e statement
-        try (
-
-            // Apertura della connessione al database
-            Connection conn = Menu.getDbConnection();
-
-            // Preparazione della query SQL da eseguire con parametri
-            PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
-            // Sostituzione del primo parametro (?) con il nome della tabella
-            stmt.setString(1, tableName);
-
-            // Sostituzione del secondo parametro (?) con il nome ricevuto in input
-            stmt.setString(2, nome);
-
-            // Sostituzione del terzo parametro (?) con l'email ricevuta in input
-            stmt.setString(3, email);
-
-            // Esecuzione dell'istruzione SQL (INSERT)
-            stmt.executeUpdate();
-
-            System.out.println("L'utente " + nome + " con email " + email + " è stato inserito correttamente nel DB");
-
-        // Gestione degli eventuali errori SQL 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     // Metodo statico che esegue l'inserimento (CREATE) di un ordine nel database
     public void insertOrdine(int id, int quantità, String data_ordine, int prodotto_id) {
 
-        // Query SQL con parametri da sostituire con PreparedStatement 
+        // Query SQL con parametri da sostituire con PreparedStatement
         String sql = "INSERT INTO ordine (id, quantità, data_ordine, prodotto_id) VALUES (?, ?, ?, ?)";
 
-        // Apertura del blocco try-with-resources che chiude automaticamente connessione e statement
+        // Apertura del blocco try-with-resources che chiude automaticamente connessione
+        // e statement
         try (
 
-            // Apertura della connessione al database
-            Connection conn = Menu.getDbConnection();
+                // Apertura della connessione al database
+                Connection conn = Menu.getDbConnection();
 
-            // Preparazione della query SQL da eseguire con parametri
-            PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
-            // Sostituzione del primo parametro 
+                // Preparazione della query SQL da eseguire con parametri
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Sostituzione del primo parametro
             stmt.setInt(1, id);
 
-            // Sostituzione del secondo parametro 
+            // Sostituzione del secondo parametro
             stmt.setInt(2, quantità);
 
-            // Sostituzione del terzo parametro 
+            // Sostituzione del terzo parametro
             stmt.setString(3, data_ordine);
 
             // Sostituzione del quarto
@@ -76,26 +39,61 @@ public class EstoreDb
             // Esecuzione dell'istruzione SQL (INSERT)
             stmt.executeUpdate();
 
-            System.out.println("prodotto inserito correttamente nel DB");
+            System.out.println("Ordine inserito correttamente nel DB");
 
-        // Gestione degli eventuali errori SQL 
+            // Gestione degli eventuali errori SQL
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    public void readOrdini() {
+        // Query SQL corretta - non si possono usare parametri per i nomi delle tabelle
+        String sql = "SELECT * FROM ordine";
+
+        try (// Apertura della connessione al database
+                Connection conn = Menu.getDbConnection();
+
+                // Creazione di un Statement normale (non PreparedStatement per questa query)
+                Statement stmt = conn.createStatement()) {
+
+            ResultSet rs = stmt.executeQuery(sql);
+
+            // Stampa intestazione
+            System.out.println("=== ELENCO ORDINI ===");
+            System.out.printf("%-5s %-10s %-15s %-12s%n", "ID", "Quantità", "Data Ordine", "Prodotto ID");
+            System.out.println("------------------------------------------------");
+
+            // Loop per stampare tutti i risultati
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int quantita = rs.getInt("quantità");
+                String dataOrdine = rs.getString("data_ordine");
+                int prodottoId = rs.getInt("prodotto_id");
+
+                System.out.printf("%-5d %-10d %-15s %-12d%n",
+                        id, quantita, dataOrdine, prodottoId);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Errore durante la lettura degli ordini:");
+            e.printStackTrace();
+        }
+    }
+
     // Aggiorna nome utente
-    public void updateUtente(int id, String nuovoNome) {
+    public void updateOrdine(int id, int quantità, String data_ordine, int prodotto_id) {
         String sql = "UPDATE ? SET nome = ? WHERE id = ?";
         try (
                 Connection conn = Menu.getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, tableName);
-            stmt.setString(2, nuovoNome);
-            stmt.setInt(3, id);
+            stmt.setInt(2, quantità);
+            stmt.setString(3, data_ordine);
+            stmt.setInt(4, prodotto_id);
             stmt.executeUpdate();
-            System.out.println("Utente aggiornato.");
+            System.out.println("Ordine aggiornato.");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -103,33 +101,30 @@ public class EstoreDb
     }
 
     // DELETE
-    public void deleteUser(int id)
-    {
-        //safe delete query
+    public void deleteOrdine(int id) {
+        // safe delete query
         String sql = "DELETE FROM ? WHERE id = ?";
 
-        //tries to delete the user record specified
-        try
-        {
-            //gets db connection
+        // tries to delete the user record specified
+        try {
+            // gets db connection
             Connection conn = Menu.getDbConnection();
 
-            //creates a prepare statement for safe queries
+            // creates a prepare statement for safe queries
             PreparedStatement stmt = conn.prepareStatement(sql);
 
-            //sets first '?' parameter
+            // sets first '?' parameter
             stmt.setString(1, tableName);
             stmt.setInt(2, id);
 
-            //executes query
+            // executes query
             stmt.executeUpdate();
 
-            System.out.println("Utente eliminato.");
+            System.out.println("Ordine eliminato.");
         }
-        
-        //if delete query failed
-        catch (SQLException e)
-        {
+
+        // if delete query failed
+        catch (SQLException e) {
             e.printStackTrace();
         }
     }
