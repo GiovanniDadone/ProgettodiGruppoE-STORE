@@ -12,7 +12,7 @@ CREATE TABLE ordine (
     quantità INT,
     data_ordine VARCHAR(100),
     prodotto_id INT,
-    FOREIGN KEY (prodotto_id) REFERENCES prodotto(id)
+    FOREIGN KEY (prodotto_id) REFERENCES prodotto(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 REPLACE INTO prodotto (id, nome, prezzo) VALUES
