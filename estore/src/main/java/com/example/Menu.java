@@ -20,9 +20,6 @@ public class Menu {
         // inits scanner inputs
         GlobalScanner.InitScannerInputs();
 
-        // password input
-        password = PasswordField.readPassword("Insert password: ");
-
         // tries to establish a db connection
         try {
             dbConnection = DriverManager.getConnection(URL, USER, password);
@@ -67,13 +64,13 @@ public class Menu {
                     data = "";
 
                     // Lettura ordineId
-                    ordineId = GlobalScanner.readIntInput("Inserire il numero di Id:", true);
+                    ordineId = GlobalScanner.readIntInput("Inserire l'id dell'ordine:", true);
 
                     // Lettura ordineId
-                    quantità = GlobalScanner.readIntInput("Inserire il numero di Id:", true);
+                    quantità = GlobalScanner.readIntInput("Inserire la quantità:", true);
 
                     // Lettura ordineId
-                    prodottoId = GlobalScanner.readIntInput("Inserire il numero di Id:", true);
+                    prodottoId = GlobalScanner.readIntInput("Inserire l'id del prodotto:", true);
 
                     // Lettura data
                     data = GlobalScanner.readStringInput("Inserire la data:", true);

@@ -48,31 +48,32 @@ public class EstoreDb {
     }
 
     public void readOrdini() {
-        // Query SQL corretta - non si possono usare parametri per i nomi delle tabelle
         String sql = "SELECT * FROM ordine";
 
-        try (// Apertura della connessione al database
-                Connection conn = Menu.getDbConnection();
+        try (Connection conn = Menu.getDbConnection()) {
 
-                // Creazione di un Statement normale (non PreparedStatement per questa query)
-                Statement stmt = conn.createStatement()) {
+            // Verifica se la connessione è ancora attiva
+            if (conn == null || conn.isClosed()) {
+                System.err.println("Errore: Connessione al database non disponibile");
+                return;
+            }
 
-            ResultSet rs = stmt.executeQuery(sql);
+            try (Statement stmt = conn.createStatement()) {
+                ResultSet rs = stmt.executeQuery(sql);
 
-            // Stampa intestazione
-            System.out.println("=== ELENCO ORDINI ===");
-            System.out.printf("%-5s %-10s %-15s %-12s%n", "ID", "Quantità", "Data Ordine", "Prodotto ID");
-            System.out.println("------------------------------------------------");
+                System.out.println("=== ELENCO ORDINI ===");
+                System.out.printf("%-5s %-10s %-15s %-12s%n", "ID", "Quantità", "Data Ordine", "Prodotto ID");
+                System.out.println("------------------------------------------------");
 
-            // Loop per stampare tutti i risultati
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                int quantita = rs.getInt("quantità");
-                String dataOrdine = rs.getString("data_ordine");
-                int prodottoId = rs.getInt("prodotto_id");
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    int quantita = rs.getInt("quantità");
+                    String dataOrdine = rs.getString("data_ordine");
+                    int prodottoId = rs.getInt("prodotto_id");
 
-                System.out.printf("%-5d %-10d %-15s %-12d%n",
-                        id, quantita, dataOrdine, prodottoId);
+                    System.out.printf("%-5d %-10d %-15s %-12d%n",
+                            id, quantita, dataOrdine, prodottoId);
+                }
             }
 
         } catch (Exception e) {
