@@ -2,12 +2,19 @@ package com.example;
 
 import java.sql.*;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class Menu {
     // static variables declaration & init
 
-    private static final String URL = "jdbc:mysql://localhost:3306/estore";
-    private static final String USER = "giovanni";
-    private static String password = "B@RGHa86$b";
+    private static final Dotenv dotenv = Dotenv
+            .configure()
+            .directory("estore\\.env")
+            .load();
+
+    private static final String URL = dotenv.get("DB_URL");
+    private static final String USER = dotenv.get("DB_USERNAME");
+    private static String password = dotenv.get("DB_PASSWORD");
     private static Connection dbConnection = null;
 
     // returns the object connected to the DB
