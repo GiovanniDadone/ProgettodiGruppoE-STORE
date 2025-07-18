@@ -1,5 +1,6 @@
 # pom.xml maven project
 pom.xml
+.env
 
 # Compiled class file
 *.class
