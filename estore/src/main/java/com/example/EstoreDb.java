@@ -46,6 +46,44 @@ public class EstoreDb
         }
     }
 
+    // Metodo statico che esegue l'inserimento (CREATE) di un ordine nel database
+    public void insertOrdine(int id, int quantità, String data_ordine, int prodotto_id) {
+
+        // Query SQL con parametri da sostituire con PreparedStatement 
+        String sql = "INSERT INTO ordine (id, quantità, data_ordine, prodotto_id) VALUES (?, ?, ?, ?)";
+
+        // Apertura del blocco try-with-resources che chiude automaticamente connessione e statement
+        try (
+
+            // Apertura della connessione al database
+            Connection conn = Menu.getDbConnection();
+
+            // Preparazione della query SQL da eseguire con parametri
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            // Sostituzione del primo parametro 
+            stmt.setInt(1, id);
+
+            // Sostituzione del secondo parametro 
+            stmt.setInt(2, quantità);
+
+            // Sostituzione del terzo parametro 
+            stmt.setString(3, data_ordine);
+
+            // Sostituzione del quarto
+            stmt.setInt(4, prodotto_id);
+
+            // Esecuzione dell'istruzione SQL (INSERT)
+            stmt.executeUpdate();
+
+            System.out.println("prodotto inserito correttamente nel DB");
+
+        // Gestione degli eventuali errori SQL 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     // Aggiorna nome utente
     public void updateUtente(int id, String nuovoNome) {
         String sql = "UPDATE ? SET nome = ? WHERE id = ?";
